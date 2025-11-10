@@ -1,6 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, CheckCircle2, Circle, Trash2, Edit2, X, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Search,
+  CheckCircle2,
+  Circle,
+  Trash2,
+  Edit2,
+  X,
+  AlertTriangle,
+} from "lucide-react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,7 +18,13 @@ interface ModalProps {
   message: string;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onConfirm, title, message }) => {
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -35,7 +49,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onConfirm, title, messag
               <AlertTriangle className="w-6 h-6 text-red-600" />
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {title}
+              </h3>
               <p className="text-gray-600">{message}</p>
             </div>
           </div>
@@ -85,21 +101,21 @@ const Toast: React.FC<ToastProps> = ({ message, isVisible }) => (
 
 interface TaskInputProps {
   onAddTask: (text: string) => void;
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, inputRef }) => {
-  const [taskText, setTaskText] = useState('');
+  const [taskText, setTaskText] = useState("");
 
   const handleSubmit = () => {
     if (taskText.trim()) {
       onAddTask(taskText.trim());
-      setTaskText('');
+      setTaskText("");
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') handleSubmit();
+    if (e.key === "Enter") handleSubmit();
   };
 
   return (
@@ -141,7 +157,12 @@ interface TaskItemProps {
   onEdit: (id: number, newText: string) => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, onEdit }) => {
+const TaskItem: React.FC<TaskItemProps> = ({
+  task,
+  onToggle,
+  onDelete,
+  onEdit,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(task.text);
 
@@ -182,8 +203,8 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, onEdit })
             onChange={(e) => setEditText(e.target.value)}
             onBlur={handleEdit}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') handleEdit();
-              if (e.key === 'Escape') setIsEditing(false);
+              if (e.key === "Enter") handleEdit();
+              if (e.key === "Escape") setIsEditing(false);
             }}
             autoFocus
             className="flex-1 px-2 py-1 border border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -191,7 +212,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, onEdit })
         ) : (
           <span
             className={`flex-1 text-gray-900 ${
-              task.completed ? 'line-through text-gray-500' : ''
+              task.completed ? "line-through text-gray-500" : ""
             }`}
           >
             {task.text}
@@ -205,7 +226,11 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, onEdit })
             onClick={() => setIsEditing(!isEditing)}
             className="text-blue-600 hover:text-blue-700"
           >
-            {isEditing ? <X className="w-5 h-5" /> : <Edit2 className="w-5 h-5" />}
+            {isEditing ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Edit2 className="w-5 h-5" />
+            )}
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.1 }}
@@ -228,7 +253,12 @@ interface TaskListProps {
   onEdit: (id: number, newText: string) => void;
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, onToggle, onDelete, onEdit }) => {
+const TaskList: React.FC<TaskListProps> = ({
+  tasks,
+  onToggle,
+  onDelete,
+  onEdit,
+}) => {
   if (tasks.length === 0) {
     return (
       <motion.div
@@ -261,7 +291,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onToggle, onDelete, onEdit }
 
 interface ModalState {
   isOpen: boolean;
-  type: 'delete' | 'clearAll' | null;
+  type: "delete" | "clearAll" | null;
   taskId: number | null;
 }
 
@@ -272,25 +302,32 @@ interface ToastState {
 
 export default function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState<'all' | 'completed' | 'pending'>('all');
-  const [modalState, setModalState] = useState<ModalState>({ isOpen: false, type: null, taskId: null });
-  const [toast, setToast] = useState<ToastState>({ message: '', isVisible: false });
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState<"all" | "completed" | "pending">("all");
+  const [modalState, setModalState] = useState<ModalState>({
+    isOpen: false,
+    type: null,
+    taskId: null,
+  });
+  const [toast, setToast] = useState<ToastState>({
+    message: "",
+    isVisible: false,
+  });
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    const savedTasks = localStorage.getItem('tasks');
+    const savedTasks = localStorage.getItem("tasks");
     if (savedTasks) setTasks(JSON.parse(savedTasks));
     inputRef.current?.focus();
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+    localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
   const showToast = (message: string) => {
     setToast({ message, isVisible: true });
-    setTimeout(() => setToast({ message: '', isVisible: false }), 3000);
+    setTimeout(() => setToast({ message: "", isVisible: false }), 3000);
   };
 
   const addTask = (text: string) => {
@@ -301,41 +338,43 @@ export default function App() {
       createdAt: new Date().toISOString(),
     };
     setTasks([newTask, ...tasks]);
-    showToast('Task added successfully!');
+    showToast("Task added successfully!");
   };
 
   const toggleTask = (id: number) => {
-    setTasks(tasks.map((task) =>
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
+    );
   };
 
   const deleteTask = (id: number) => {
-    setModalState({ isOpen: true, type: 'delete', taskId: id });
+    setModalState({ isOpen: true, type: "delete", taskId: id });
   };
 
   const confirmDelete = () => {
     setTasks(tasks.filter((task) => task.id !== modalState.taskId));
     setModalState({ isOpen: false, type: null, taskId: null });
-    showToast('Task deleted successfully!');
+    showToast("Task deleted successfully!");
   };
 
   const editTask = (id: number, newText: string) => {
-    setTasks(tasks.map((task) =>
-      task.id === id ? { ...task, text: newText } : task
-    ));
-    showToast('Task updated successfully!');
+    setTasks(
+      tasks.map((task) => (task.id === id ? { ...task, text: newText } : task))
+    );
+    showToast("Task updated successfully!");
   };
 
   const clearAllTasks = () => {
-    setModalState({ isOpen: true, type: 'clearAll', taskId: null });
+    setModalState({ isOpen: true, type: "clearAll", taskId: null });
   };
 
   const confirmClearAll = () => {
     setTasks([]);
-    localStorage.removeItem('tasks');
+    localStorage.removeItem("tasks");
     setModalState({ isOpen: false, type: null, taskId: null });
-    showToast('All tasks cleared!');
+    showToast("All tasks cleared!");
   };
 
   const closeModal = () => {
@@ -343,11 +382,13 @@ export default function App() {
   };
 
   const filteredTasks = tasks.filter((task) => {
-    const matchesSearch = task.text.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = task.text
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     const matchesFilter =
-      filter === 'all' ||
-      (filter === 'completed' && task.completed) ||
-      (filter === 'pending' && !task.completed);
+      filter === "all" ||
+      (filter === "completed" && task.completed) ||
+      (filter === "pending" && !task.completed);
     return matchesSearch && matchesFilter;
   });
 
@@ -363,21 +404,32 @@ export default function App() {
           className="bg-white rounded-2xl shadow-xl p-8"
         >
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Task Manager</h1>
-            <p className="text-gray-600">Organize your day, one task at a time</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              Task Manager
+            </h1>
+            <p className="text-gray-600">
+              Organize your day, one task at a time
+            </p>
           </div>
 
           <TaskInput onAddTask={addTask} inputRef={inputRef} />
 
           <div className="flex items-center justify-between mb-6 p-4 bg-blue-50 rounded-lg">
             <div className="text-sm text-gray-700">
-              <span className="font-semibold text-blue-600">{totalTasks}</span> total tasks
+              <span className="font-semibold text-blue-600">{totalTasks}</span>{" "}
+              total tasks
             </div>
             <div className="text-sm text-gray-700">
-              <span className="font-semibold text-green-600">{completedTasks}</span> completed
+              <span className="font-semibold text-green-600">
+                {completedTasks}
+              </span>{" "}
+              completed
             </div>
             <div className="text-sm text-gray-700">
-              <span className="font-semibold text-orange-600">{totalTasks - completedTasks}</span> pending
+              <span className="font-semibold text-orange-600">
+                {totalTasks - completedTasks}
+              </span>{" "}
+              pending
             </div>
           </div>
 
@@ -393,16 +445,18 @@ export default function App() {
               />
             </div>
             <div className="flex gap-2">
-              {['all', 'pending', 'completed'].map((filterType) => (
+              {["all", "pending", "completed"].map((filterType) => (
                 <motion.button
                   key={filterType}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setFilter(filterType as 'all' | 'completed' | 'pending')}
+                  onClick={() =>
+                    setFilter(filterType as "all" | "completed" | "pending")
+                  }
                   className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${
                     filter === filterType
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
                 >
                   {filterType}
@@ -434,12 +488,16 @@ export default function App() {
       <Modal
         isOpen={modalState.isOpen}
         onClose={closeModal}
-        onConfirm={modalState.type === 'clearAll' ? confirmClearAll : confirmDelete}
-        title={modalState.type === 'clearAll' ? 'Clear All Tasks?' : 'Delete Task?'}
+        onConfirm={
+          modalState.type === "clearAll" ? confirmClearAll : confirmDelete
+        }
+        title={
+          modalState.type === "clearAll" ? "Clear All Tasks?" : "Delete Task?"
+        }
         message={
-          modalState.type === 'clearAll'
-            ? 'This will permanently delete all your tasks. This action cannot be undone.'
-            : 'Are you sure you want to delete this task? This action cannot be undone.'
+          modalState.type === "clearAll"
+            ? "This will permanently delete all your tasks. This action cannot be undone."
+            : "Are you sure you want to delete this task? This action cannot be undone."
         }
       />
 
